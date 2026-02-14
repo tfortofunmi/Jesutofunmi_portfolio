@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rate Card - John Doe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --primary: tomato; --dark: #1a1a1a; --light: #f9f9f9; --border: #e8e8e8; }
+        body { font-family: 'Sora', sans-serif; color: #333; background: white; line-height: 1.6; }
+        
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background-image: linear-gradient(90deg, rgba(124, 179, 66, 0.03) 1px, transparent 1px), linear-gradient(rgba(124, 179, 66, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px; pointer-events: none; z-index: -1;
+        }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* CURRENCY TOGGLE - Easy to remove */
+        .currency-toggle { position: fixed; top: 20px; right: 20px; z-index: 999; background: white; padding: 0.8rem 1.2rem; border: 2px solid var(--border); border-radius: 50px; display: flex; gap: 0.5rem; }
+        .currency-btn { background: none; border: none; padding: 0.5rem 1rem; font-weight: 600; cursor: pointer; color: var(--text-light); transition: all 0.3s ease; }
+        .currency-btn.active { color: var(--primary); background: var(--light); border-radius: 8px; }
+        
+        header { background: white; padding: 3rem 2rem; text-align: center; border-bottom: 2px solid var(--border); margin-top: 1rem; }
+        header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--dark); margin-bottom: 0.5rem; }
+        header p { color: #666; font-size: 1.1rem; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+
+        .rates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+
+        .rate-card { background: white; border-radius: 10px; padding: 2.5rem; border: 2px solid var(--border); transition: all 0.3s ease; animation: fadeInUp 0.8s ease forwards; opacity: 0; }
+        .rate-card:nth-child(1) { animation-delay: 0.1s; }
+        .rate-card:nth-child(2) { animation-delay: 0.2s; }
+        .rate-card:nth-child(3) { animation-delay: 0.3s; }
+        .rate-card:nth-child(4) { animation-delay: 0.4s; }
+        .rate-card:hover { border-color: var(--primary); transform: translateY(-8px); }
+
+        .rate-card h3 { color: var(--primary); font-size: 1.4rem; margin-bottom: 1rem; font-weight: 600; }
+        .rate-card .price { font-size: 2.2rem; color: var(--dark); font-weight: 700; margin-bottom: 0.5rem; }
+        .rate-card .price span { font-size: 0.9rem; color: #999; }
+        .rate-card .description { color: #666; margin-bottom: 2rem; font-size: 0.95rem; }
+        .rate-card ul { list-style: none; margin-bottom: 2rem; }
+        .rate-card ul li { padding: 0.7rem 0; color: #555; border-bottom: 1px solid var(--border); font-size: 0.95rem; }
+        .rate-card ul li:last-child { border-bottom: none; }
+        .rate-card ul li::before { content: "✓ "; color: var(--primary); font-weight: 700; margin-right: 0.5rem; }
+
+        .cta-btn { display: block; width: 100%; padding: 1rem; background: var(--primary); color: white; text-decoration: none; text-align: center; border-radius: 50px; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer; font-size: 1rem; }
+        .cta-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+        .back-link { display: inline-block; margin-bottom: 2rem; color: var(--primary); text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.95rem; }
+        .back-link:hover { transform: translateX(-5px); }
+        .back-link::before { content: "← "; margin-right: 0.5rem; }
+
+        .note { background: var(--light); border: 2px solid red; padding: 2rem; border-radius: 10px; text-align: center; margin-top: 4rem; }
+        .note h4 { margin-bottom: 0.5rem; color: var(--dark); font-size: 1.1rem; }
+        .note p { color: #666; }
+
+        @media (max-width: 768px) {
+            .currency-toggle { position: static; margin: 1rem; width: fit-content; margin-left: auto; margin-right: auto; }
+            header { padding: 2rem; }
+            header h1 { font-size: 2rem; }
+            .container { padding: 2.5rem 2rem; }
+            .back-link { font-size: 0.9rem; margin-bottom: 1.5rem; }
+            .rates-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+            .rate-card { padding: 2rem; }
+            .rate-card h3 { font-size: 1.2rem; }
+            .rate-card .price { font-size: 1.8rem; }
+            .cta-btn { padding: 0.8rem 1.5rem; }
+            .note { padding: 1.5rem; }
+        }
+
+        @media (max-width: 480px) {
+            .currency-toggle { padding: 0.6rem 1rem; font-size: 0.85rem; }
+            .currency-btn { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+            header { padding: 1.5rem; }
+            header h1 { font-size: 1.5rem; }
+            header p { font-size: 0.9rem; }
+            .container { padding: 2rem 1rem; }
+            .back-link { font-size: 0.85rem; }
+            .rates-grid { gap: 1rem; }
+            .rate-card { padding: 1.5rem; }
+            .rate-card h3 { font-size: 1.1rem; }
+            .rate-card .price { font-size: 1.6rem; }
+            .rate-card ul li { font-size: 0.85rem; }
+            .cta-btn { padding: 0.7rem 1.2rem; font-size: 0.9rem; }
+            .note { padding: 1.2rem; margin-top: 2rem; }
+            .note h4 { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- CURRENCY TOGGLE (Remove entire section if not needed) -->
+    <div class="currency-toggle">
+        <button class="currency-btn active" data-currency="usd">USD $</button>
+        <button class="currency-btn" data-currency="naira">NGN ₦</button>
+    </div>
+
+    <header>
+        <h1>My Rate Card</h1>
+        <p>Transparent pricing for all services</p>
+    </header>
+
+    <div class="container">
+        <a href="index.html" class="back-link">Back to Portfolio</a>
+
+        <div class="rates-grid">
+            <!-- WEB DEVELOPMENT -->
+            <div class="rate-card">
+                <h3>Web Development</h3>
+                <div class="price">
+                    Starting at <span class="price-value" data-usd="$100" data-naira="₦100,000">$500</span>
+                </div>
+                <p class="description">Custom website development with modern technologies</p>
+                <ul>
+                    <li class="price-item" data-usd="Landing Pages - $100-200" data-naira="Landing Pages - ₦100,000-150,000">Landing Pages - $100-200</li>
+                    <li class="price-item" data-usd="Business Websites - $180-400" data-naira="Business Websites - ₦200k-300k">Business Websites - $180-400</li>
+                    <li class="price-item" data-usd="Web Apps - $250-500+" data-naira="Web Apps - ₦250k-500k++">Web Apps - $250-500+</li>
+                    <li>Responsive Design Included</li>
+                    <li>Fast Loading Speeds</li>
+                    <li>SEO Optimized</li>
+                </ul>
+                <a href="index.html#testimonials" class="cta-btn">Get a Quote</a>
+            </div>
+
+            <!-- UI DESIGN -->
+            <div class="rate-card">
+                <h3>UI/UX Design</h3>
+                <div class="price">
+                    Starting at <span class="price-value" data-usd="$60" data-naira="₦65,000">$60</span>
+                </div>
+                <p class="description">Beautiful and functional design solutions</p>
+                <ul>
+                    <li class="price-item" data-usd="Illustration Design - $60-150" data-naira="Illustration Design - ₦65,000-150,000">Illustration Design - $60-150</li>
+                    <li class="price-item" data-usd="UI Design - $150-1,000" data-naira="UI Design - ₦150k-1.5M">UI Design - $150-1,000</li>
+                    <li>Figma Prototypes</li>
+                    <li>High-Fidelity Mockups</li>
+                    <li>Design Systems</li>
+                </ul>
+                <a href="index.html#testimonials" class="cta-btn">Get a Quote</a>
+            </div>
+
+            <!-- SUPPORT & OPERATIONS -->
+            <div class="rate-card">
+                <h3>Support & Operations</h3>
+                <div class="price">
+                    <span class="price-value" data-usd="$15/hour" data-naira="₦22,500/hour">$15/hour</span>
+                </div>
+                <p class="description">Administrative and operational support</p>
+                <ul>
+                    <li class="price-item" data-usd="Virtual Assistance - $15/hour" data-naira="Virtual Assistance - ₦22,500/hour">Virtual Assistance - $15/hour</li>
+                    <li class="price-item" data-usd="Excel Management - $20/hour" data-naira="Excel Management - ₦30,000/hour">Excel Management - $20/hour</li>
+                    <li class="price-item" data-usd="Data Entry - $15/hour" data-naira="Data Entry - ₦22,500/hour">Data Entry - $15/hour</li>
+                    <li>Email Management</li>
+                    <li>Spreadsheet Optimization</li>
+                    <li>Admin Tasks & More</li>
+                </ul>
+                <a href="index.html#testimonials" class="cta-btn">Get a Quote</a>
+            </div>
+
+            <!-- MEDIA & CONTENT -->
+            <div class="rate-card">
+                <h3>Media & Content</h3>
+                <div class="price">
+                    Starting at <span class="price-value" data-usd="$25" data-naira="₦33,871">$25</span>
+                </div>
+                <p class="description">Video editing, writing, and visual content</p>
+                <ul>
+                    <li class="price-item" data-usd="Video Editing - $25-100" data-naira="Video Editing - ₦25,000-100k">Video Editing - $25-100</li>
+                    <li class="price-item" data-usd="Content Writing - $30-100" data-naira="Content Writing - ₦40,645-300,000">Content Writing - $30-100</li>
+                    <li class="price-item" data-usd="Thumbnail Design - $50-200" data-naira="Thumbnail Design - ₦75,000-300,000">Thumbnail Design - $50-200</li>
+                    <li>Social Media Content</li>
+                    <li>Professional Editing</li>
+                    <li>Custom Graphics</li>
+                </ul>
+                <a href="index.html#testimonials" class="cta-btn">Get a Quote</a>
+            </div>
+        </div>
+
+        <div class="note">
+            <h4>Custom Packages Available</h4>
+            <p>Need a combination of services? I offer custom packages tailored to your specific needs. Contact me, lets work together.</p>
+        </div>
+    </div>
+
+    <script>
+        // CURRENCY TOGGLE - Easy to remove or modify
+        const currencyBtns = document.querySelectorAll('.currency-btn');
+        let currentCurrency = 'usd';
+
+        currencyBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                currentCurrency = btn.getAttribute('data-currency');
+                
+                // Update active button
+                currencyBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+
+                // Update all prices
+                document.querySelectorAll('.price-value').forEach(price => {
+                    if (currentCurrency === 'usd') {
+                        price.textContent = price.getAttribute('data-usd');
+                    } else {
+                        price.textContent = price.getAttribute('data-naira');
+                    }
+                });
+
+                // Update price items
+                document.querySelectorAll('.price-item').forEach(item => {
+                    if (currentCurrency === 'usd') {
+                        item.textContent = item.getAttribute('data-usd');
+                    } else {
+                        item.textContent = item.getAttribute('data-naira');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
